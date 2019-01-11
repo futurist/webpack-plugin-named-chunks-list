@@ -1,0 +1,27 @@
+{
+  "name": "webpack-plugin-named-chunks-list",
+  "version": "1.0.0",
+  "description": "List named chunks of webpack assets result",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futurist/webpack-plugin-named-chunks-list.git"
+  },
+  "keywords": [
+    "named",
+    "chunks",
+    "assets",
+    "list",
+    "webpack",
+    "plugin"
+  ],
+  "author": "James Yang <jamesyang999@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/futurist/webpack-plugin-named-chunks-list/issues"
+  },
+  "homepage": "https://github.com/futurist/webpack-plugin-named-chunks-list#readme"
+}
