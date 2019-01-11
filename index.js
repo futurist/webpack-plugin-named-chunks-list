@@ -28,10 +28,10 @@ class NamedChunksList {
           contentHash
         }
       })
-      outputFile && require('fs').writeFile(outputFile, JSON.stringify(result, null, 2), cb)
       if (typeof callback === 'function') {
-        callback(result)
+        result = callback(result)
       }
+      outputFile && result && require('fs').writeFile(outputFile, JSON.stringify(result, null, 2), cb)
       cb()
     }
     if (compiler.hooks) {
