@@ -1,13 +1,13 @@
 class NamedChunksList {
   // List named chunks of webpack assets result
-  constructor ({ outputFile = 'assets.json', callback } = {}) {
+  constructor ({ outputName = 'assets', callback } = {}) {
     this.options = {
-      outputFile,
+      outputName,
       callback
     }
   }
   apply (compiler) {
-    const { outputFile, callback } = this.options
+    const { outputName, callback } = this.options
     const action = function (compilation, cb) {
       // namedChunks: name, chunkReason, files, contentHash
       const { namedChunks } = compilation
@@ -31,13 +31,15 @@ class NamedChunksList {
       if (typeof callback === 'function') {
         result = callback(result)
       }
-      outputFile && result && require('fs').writeFileSync(outputFile, JSON.stringify(result, null, 2))
+
+      compilation.assets[outputName] = new RawSource(JSON.stringify(result, null, 2))
+
       typeof cb==='function' && cb()
     }
     if (compiler.hooks) {
-      compiler.hooks.afterEmit.tap('NamedChunksList', action)
+      compiler.hooks.emit.tap('NamedChunksList', action)
     } else {
-      compiler.plugin('after-emit', action)
+      compiler.plugin('emit', action)
     }
   }
 }
