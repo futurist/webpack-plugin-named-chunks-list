@@ -8,7 +8,7 @@ class NamedChunksList {
   }
   apply (compiler) {
     const { outputFile, callback } = this.options
-    const action = function (compilation) {
+    const action = function (compilation, cb) {
       // namedChunks: name, chunkReason, files, contentHash
       const { namedChunks } = compilation
       let chunks = Object.keys(namedChunks).map(key => [key, namedChunks[key]])
@@ -32,11 +32,12 @@ class NamedChunksList {
         result = callback(result)
       }
       outputFile && result && require('fs').writeFileSync(outputFile, JSON.stringify(result, null, 2))
+      typeof cb==='function' && cb()
     }
     if (compiler.hooks) {
-      compiler.hooks.emit.tap('NamedChunksList', action)
+      compiler.hooks.afterEmit.tap('NamedChunksList', action)
     } else {
-      compiler.plugin('emit', action)
+      compiler.plugin('after-emit', action)
     }
   }
 }
