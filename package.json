@@ -1,6 +1,6 @@
 {
   "name": "webpack-plugin-named-chunks-list",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "List named chunks of webpack assets result",
   "main": "index.js",
   "scripts": {
