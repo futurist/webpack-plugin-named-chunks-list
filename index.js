@@ -1,6 +1,7 @@
 const {
   RawSource
-} = require('webpack-sources');
+} = require('webpack-sources')
+const revHash = require('rev-hash')
 
 class NamedChunksList {
   // List named chunks of webpack assets result
@@ -16,11 +17,12 @@ class NamedChunksList {
   apply(compiler) {
     const {
       outputName,
-      callback
+      callback,
     } = this.options
     const action = function (compilation, cb) {
       // namedChunks: name, chunkReason, files, contentHash
       const {
+        assets,
         namedChunks
       } = compilation
       let chunks = Object.keys(namedChunks).map(key => [key, namedChunks[key]])
@@ -30,13 +32,18 @@ class NamedChunksList {
           namedChunks.get(key)
         ])
       }
-      const result = chunks.map(([key, val]) => {
-        const {
+      let result = chunks.map(([key, val]) => {
+        let {
           name,
           chunkReason,
           files,
-          contentHash
+          contentHash = {}
         } = val
+        // webpack 3 lost contentHash
+        files.forEach(f => {
+          contentHash[f] = revHash(assets[f].source())
+        });
+
         return {
           key,
           name,
@@ -46,10 +53,10 @@ class NamedChunksList {
         }
       })
       if (typeof callback === 'function') {
-        result = callback(result)
+        result = callback(result, compilation)
       }
 
-      compilation.assets[outputName + '.json'] = new RawSource(JSON.stringify(result, null, 2))
+      assets[outputName + '.json'] = new RawSource(JSON.stringify(result, null, 2))
 
       typeof cb === 'function' && cb()
     }
