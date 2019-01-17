@@ -7,17 +7,20 @@ class NamedChunksList {
   // List named chunks of webpack assets result
   constructor({
     outputName = 'assets',
-    callback
+    callback,
+    ensureHash
   } = {}) {
     this.options = {
       outputName,
-      callback
+      callback,
+      ensureHash
     }
   }
   apply(compiler) {
     const {
       outputName,
       callback,
+      ensureHash
     } = this.options
     const action = function (compilation, cb) {
       // namedChunks: name, chunkReason, files, contentHash
@@ -40,8 +43,19 @@ class NamedChunksList {
           contentHash = {}
         } = val
         // webpack 3 lost contentHash
-        files.forEach(f => {
-          contentHash[f] = revHash(assets[f].source())
+        files = files.map(f => {
+          const hash = contentHash[f] = revHash(assets[f].source())
+          if(ensureHash) {
+            const parts = f.split('.');
+            if (parts.length < 3 && hash) {
+              parts[0] += '.' + hash;
+              const oldName = f;
+              f = parts.join('.');
+              assets[f] = assets[oldName]
+              delete assets[oldName]
+            }
+          }
+          return f;
         });
 
         return {

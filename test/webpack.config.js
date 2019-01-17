@@ -31,6 +31,8 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: '[name].css'
         }),
-        new plugin()
+        new plugin({
+            ensureHash: true
+        })
     ]
 }
